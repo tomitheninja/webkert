@@ -1,1 +1,60 @@
-<p>recipe-edit-page works!</p>
+<div *ngIf="recipe$ | async as recipe" class="container">
+  <h1>Edit Recipe</h1>
+  <mat-card>
+    <form
+      [formGroup]="recipeForm"
+      (ngSubmit)="submitRecipe()"
+      class="form-container"
+    >
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Title</mat-label>
+        <input matInput type="text" formControlName="title" />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Description</mat-label>
+        <textarea matInput rows="3" formControlName="description"></textarea>
+      </mat-form-field>
+      <div class="ingredients-section">
+        <mat-label>Ingredients</mat-label>
+        <div formArrayName="ingredients">
+          <div
+            *ngFor="let ingredient of ingredients.controls; let i = index"
+            [formGroupName]="i"
+            class="ingredient-row"
+          >
+            <mat-form-field appearance="outline" class="ingredient-field">
+              <mat-label>Ingredient name</mat-label>
+              <input matInput type="text" formControlName="name" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="ingredient-field">
+              <mat-label>Amount</mat-label>
+              <input matInput type="text" formControlName="amount" />
+            </mat-form-field>
+            <button mat-mini-fab color="warn" (click)="removeIngredient(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+        <button mat-stroked-button color="primary" (click)="addIngredient()">
+          Add Ingredient
+        </button>
+      </div>
+      <div class="form-group">
+        <mat-label>Image</mat-label>
+        <input type="file" (change)="uploadImage($event)" accept="image/*" />
+      </div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Instructions</mat-label>
+        <textarea matInput rows="5" formControlName="instructions"></textarea>
+      </mat-form-field>
+      <button
+        mat-flat-button
+        color="accent"
+        type="submit"
+        [disabled]="!recipeForm.valid"
+      >
+        Save Changes
+      </button>
+    </form>
+  </mat-card>
+</div>

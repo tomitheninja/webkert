@@ -24,8 +24,16 @@
       <markdown>{{ recipe.instructions.replaceAll("\\n", "\n") }}</markdown>
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary">Edit Recipe</button>
-      <button mat-raised-button color="warn">Delete Recipe</button>
+      <button
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/recipes', recipe.id, 'edit']"
+      >
+        Edit Recipe
+      </button>
+      <button mat-raised-button color="warn" (click)="deleteRecipe()">
+        Delete Recipe
+      </button>
     </mat-card-actions>
   </mat-card>
 </ng-container>

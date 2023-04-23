@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import {
-  DocumentData,
-  DocumentSnapshot,
-  Firestore,
-  doc,
-  getDoc,
-} from '@angular/fire/firestore';
+import { Firestore, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { FSRecipe } from '../model/recipe';
 
 @Component({
@@ -18,7 +12,11 @@ import { FSRecipe } from '../model/recipe';
 export class RecipeViewPageComponent implements OnInit {
   recipe$!: Observable<FSRecipe>;
 
-  constructor(private route: ActivatedRoute, private firestore: Firestore) {}
+  constructor(
+    private route: ActivatedRoute,
+    private firestore: Firestore,
+    private router: Router
+  ) {}
 
   isAuthor(recipe: FSRecipe): boolean {
     return true;
@@ -38,5 +36,16 @@ export class RecipeViewPageComponent implements OnInit {
         });
       });
     }
+  }
+
+  async deleteRecipe(): Promise<void> {
+    const recipeId = this.route.snapshot.paramMap.get('id');
+    if (!recipeId) {
+      return;
+    }
+
+    const recipeRef = doc(this.firestore, 'recipes', recipeId);
+    await deleteDoc(recipeRef);
+    this.router.navigate(['/']);
   }
 }
