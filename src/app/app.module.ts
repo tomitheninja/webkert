@@ -11,9 +11,20 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { HomePageComponent } from './home-page/home-page.component';
+import { RecipeListPageComponent } from './recipe-list-page/recipe-list-page.component';
+import { RecipeViewPageComponent } from './recipe-view-page/recipe-view-page.component';
+import { ProfilePageComponent } from './profile-page/profile-page.component';
+import { RecipeEditPageComponent } from './recipe-edit-page/recipe-edit-page.component';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent],
+  declarations: [
+    AppComponent,
+    HomePageComponent,
+    RecipeListPageComponent,
+    RecipeViewPageComponent,
+    ProfilePageComponent,
+    RecipeEditPageComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

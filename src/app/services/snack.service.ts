@@ -13,4 +13,10 @@ export class SnackService {
       duration: 5000,
     });
   }
+
+  signoutSuccess() {
+    this.snackBar.open('You have been signed out!', 'OK', {
+      duration: 3000,
+    });
+  }
 }

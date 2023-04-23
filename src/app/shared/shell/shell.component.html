@@ -21,6 +21,15 @@
       <a mat-list-item appGoogleSignin *ngIf="!(user$ | async)"
         ><img width="20" src="/assets/google-logo.svg" /> Google signin</a
       >
+      <a
+        mat-list-item
+        routerLink="/profile"
+        (click)="drawer.close()"
+        *ngIf="user$ | async"
+      >
+        😃 Profile
+      </a>
+
       <a mat-list-item appSignout *ngIf="user$ | async"> 🚶 Logout </a>
     </mat-nav-list>
   </mat-sidenav>
@@ -32,10 +41,19 @@
       <!-- (Desktop) items -->
       <div *ngIf="!(isHandset$ | async)">
         <a mat-button routerLink="/recipes">📝 Recipes</a>
-        <button mat-button [matMenuTriggerFor]="account_menu">
-          {{ (user$ | async)?.displayName ?? "Please sign in" }}
+        <button
+          *ngIf="!(user$ | async)"
+          mat-button
+          [matMenuTriggerFor]="account_menu"
+        >
+          <span>Login</span>
           <mat-icon>manage_accounts</mat-icon>
         </button>
+
+        <a mat-button *ngIf="user$ | async" routerLink="/profile">
+          <mat-icon>person</mat-icon>
+          <span>{{ (user$ | async)!.displayName }}</span>
+        </a>
       </div>
       <!-- (Mobile) hamburger -->
       <button
@@ -51,10 +69,6 @@
         <!-- (Desktop) menu -->
         <button *ngIf="!(user$ | async)" mat-menu-item appGoogleSignin>
           <img width="20" src="/assets/google-logo.svg" />Google signin
-        </button>
-        <button *ngIf="user$ | async" mat-menu-item appSignout>
-          <mat-icon>logout</mat-icon>
-          <span>Logout</span>
         </button>
       </mat-menu>
     </mat-toolbar>

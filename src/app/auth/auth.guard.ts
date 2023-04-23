@@ -4,24 +4,29 @@ import {
   ActivatedRouteSnapshot,
   CanActivate,
   RouterStateSnapshot,
-  UrlTree,
 } from '@angular/router';
 import { SnackService } from '../services/snack.service';
+import { Observable, map } from 'rxjs';
+import { UserService } from '../services/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private afAuth: Auth, private snackService: SnackService) {}
+  constructor(
+    private userService: UserService,
+    private snackService: SnackService
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): boolean {
-    const isLoggedIn = !!this.afAuth.currentUser;
-    if (!isLoggedIn) {
-      this.snackService.authError();
-    }
-    return isLoggedIn;
+  ): Observable<boolean> {
+    return this.userService.getStream().pipe(
+      map((user) => {
+        if (!user) this.snackService.authError();
+        return Boolean(user);
+      })
+    );
   }
 }
