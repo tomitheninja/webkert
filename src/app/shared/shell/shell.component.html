@@ -8,13 +8,20 @@
     [mode]="(isHandset$ | async) ? 'over' : 'side'"
     [opened]="false"
   >
-    <mat-toolbar>Navigation</mat-toolbar>
+    <mat-toolbar>
+      <mat-icon>person</mat-icon>
+      {{ (user$ | async)?.displayName ?? "Please sign in" }}</mat-toolbar
+    >
     <mat-nav-list>
+      <!-- (Mobile) sidebar -->
       <a mat-list-item routerLink="/" (click)="drawer.close()">🏠 Home</a>
       <a mat-list-item routerLink="/recipes" (click)="drawer.close()"
         >📝 Recipes</a
       >
-      <!-- TODO: Google login -->
+      <a mat-list-item appGoogleSignin *ngIf="!(user$ | async)"
+        ><img width="20" src="/assets/google-logo.svg" /> Google signin</a
+      >
+      <a mat-list-item appSignout *ngIf="user$ | async"> 🚶 Logout </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -22,10 +29,15 @@
       <span class="logo" routerLink="/">📖 Recipe Managment</span>
 
       <span class="fill-space"></span>
+      <!-- (Desktop) items -->
       <div *ngIf="!(isHandset$ | async)">
         <a mat-button routerLink="/recipes">📝 Recipes</a>
-        <!-- TODO: Google login -->
+        <button mat-button [matMenuTriggerFor]="account_menu">
+          {{ (user$ | async)?.displayName ?? "Please sign in" }}
+          <mat-icon>manage_accounts</mat-icon>
+        </button>
       </div>
+      <!-- (Mobile) hamburger -->
       <button
         type="button"
         aria-label="Toggle sidenav"
@@ -35,6 +47,16 @@
       >
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
+      <mat-menu #account_menu="matMenu">
+        <!-- (Desktop) menu -->
+        <button *ngIf="!(user$ | async)" mat-menu-item appGoogleSignin>
+          <img width="20" src="/assets/google-logo.svg" />Google signin
+        </button>
+        <button *ngIf="user$ | async" mat-menu-item appSignout>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
     </mat-toolbar>
 
     <ng-content></ng-content>

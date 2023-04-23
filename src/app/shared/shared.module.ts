@@ -13,10 +13,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ShellComponent } from './shell/shell.component';
+import { AuthModule } from '../auth/auth.module';
 
 const components = [ShellComponent];
 
 const modules = [
+  AuthModule,
   CommonModule,
   RouterModule,
   MatToolbarModule,

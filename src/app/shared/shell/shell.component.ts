@@ -1,6 +1,8 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component } from '@angular/core';
+import { Auth } from '@angular/fire/auth';
 import { Observable, map, shareReplay } from 'rxjs';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-shell',
@@ -15,5 +17,14 @@ export class ShellComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  user$: Observable<User | null>;
+
+  constructor(
+    public afAuth: Auth,
+    private breakpointObserver: BreakpointObserver
+  ) {
+    this.user$ = new Observable((observer) => {
+      this.afAuth.onAuthStateChanged((user) => observer.next(user));
+    });
+  }
 }
