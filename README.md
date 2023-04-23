@@ -14,6 +14,9 @@ mat-toolbar
 - [ ] Firebase Hosting URL (létezik, és minden végpont megfelelő módon betöltődik)
 - [ ] Adatmodell definiálása (legalább 4 TypeScript interfész vagy class formájában (ugyanennyi kollekció))
   1. FSUser
+  2. FSRecipe
+  3. FSIngredient
+  4. FSComment
 - [ ] Alkalmazás felbontása megfelelő számú komponensre (egyetlen komponens TS és HTML kódja sem haladja meg a 250 sort és soronként a 400 karaktert)
 - [ ] Reszponzív, mobile-first felület (minden adat látható és jól jelenik meg böngészőben is, mobil nézetben is)
 - [ ] Legalább 2 különböző attribútum direktíva használata

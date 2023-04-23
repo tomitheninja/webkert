@@ -26,16 +26,20 @@ export class GoogleSigninDirective {
         const user = await firstValueFrom(docData(users, { idField: 'id' }));
 
         if (!user) {
-          // register user
+          if (!result.user.displayName) {
+            throw new Error('User must have a name');
+          }
+          console.log(user);
 
-          await setDoc(users, {
-            name: result.user.displayName,
-            email: result.user.email,
-            photoURL: result.user.photoURL,
-            id: result.user.uid,
-            createdAt: new Date(),
-            lastLogin: new Date(),
-          } as FSUser);
+          await setDoc(
+            users,
+            new FSUser({
+              name: result.user.displayName || 'Anonymous',
+              email: result.user.email ?? null,
+              photoURL: result.user.photoURL ?? null,
+              id: result.user.uid,
+            }).json()
+          );
         } else {
           await updateDoc(users, { lastLogin: new Date() });
         }
