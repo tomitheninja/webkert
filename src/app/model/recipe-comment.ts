@@ -4,6 +4,6 @@ export interface FSRecipeComment {
   userId: string;
   userName: string;
   comment: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: Date | { seconds: number };
+  updatedAt?: Date | { seconds: number };
 }

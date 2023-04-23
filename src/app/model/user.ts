@@ -1,8 +1,8 @@
 export class FSUser {
   email: string | null = null;
   photoURL: string | null = null;
-  lastLogin: Date = new Date();
-  createdAt: Date = new Date();
+  lastLogin: Date | { seconds: number } = new Date();
+  createdAt: Date | { seconds: number } = new Date();
   name!: string;
   id!: string;
 

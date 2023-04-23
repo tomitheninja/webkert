@@ -31,6 +31,8 @@ mat-toolbar
   6. mat-sidenav-container
   7. mat-sidenav
   8. mat-toolbar
+  9. MatInputModule,
+  10. FormsModule,
 - [ ] Adatbevitel Angular form-ok segítségével megvalósítva (legalább 2)
 - [ ] Legalább 1 saját Pipe osztály írása és használata
   1. TimePipe

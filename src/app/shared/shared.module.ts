@@ -14,6 +14,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ShellComponent } from './shell/shell.component';
 import { AuthModule } from '../auth/auth.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const components = [ShellComponent];
 
@@ -21,18 +23,20 @@ const modules = [
   AuthModule,
   CommonModule,
   RouterModule,
-  MatToolbarModule,
-  MatIconModule,
+  FormsModule,
   LayoutModule,
   MatButtonModule,
-  MatSidenavModule,
+  MatCardModule,
+  MatDialogModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
   MatListModule,
   MatMenuModule,
-  MatIconModule,
-  MatCardModule,
-  MatFormFieldModule,
-  MatInputModule,
+  MatSidenavModule,
   MatSnackBarModule,
+  MatToolbarModule,
+  ReactiveFormsModule,
 ];
 
 @NgModule({

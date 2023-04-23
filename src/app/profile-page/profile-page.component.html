@@ -1,3 +1,42 @@
-<p>profile works!</p>
-{{ user$ | async | json }}
-<a mat-button appSignout>logout</a>
+<div class="profile-container">
+  <div class="profile-card">
+    <mat-card *ngIf="user != null">
+      <div class="avatar-container" (click)="changeAvatar()">
+        <img class="avatar-image" [src]="user!.photoURL" alt="Avatar" />
+
+        <ng-template #noPhoto>
+          <div class="avatar-placeholder">
+            <mat-icon class="avatar-icon">account_circle</mat-icon>
+          </div>
+        </ng-template>
+      </div>
+      <mat-card-header>
+        <mat-card-title>{{ user!.name }}</mat-card-title>
+        <mat-card-subtitle>{{ user!.email }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="member-since">
+          Member since {{ user!.createdAt | relativeDate }}
+        </p>
+      </mat-card-content>
+      <mat-card-actions class="card-actions">
+        <button
+          mat-raised-button
+          color="accent"
+          appSignout
+          class="signout-button"
+        >
+          Sign Out
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openDialog()"
+          class="change-name-button"
+        >
+          Change Name
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

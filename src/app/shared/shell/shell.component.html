@@ -10,7 +10,7 @@
   >
     <mat-toolbar>
       <mat-icon>person</mat-icon>
-      {{ (user$ | async)?.displayName ?? "Please sign in" }}</mat-toolbar
+      {{ (user$ | async)?.name ?? "Please sign in" }}</mat-toolbar
     >
     <mat-nav-list>
       <!-- (Mobile) sidebar -->
@@ -52,7 +52,7 @@
 
         <a mat-button *ngIf="user$ | async" routerLink="/profile">
           <mat-icon>person</mat-icon>
-          <span>{{ (user$ | async)!.displayName }}</span>
+          <span>{{ (user$ | async)!.name }}</span>
         </a>
       </div>
       <!-- (Mobile) hamburger -->

@@ -15,6 +15,8 @@ import { RecipeListPageComponent } from './recipe-list-page/recipe-list-page.com
 import { RecipeViewPageComponent } from './recipe-view-page/recipe-view-page.component';
 import { ProfilePageComponent } from './profile-page/profile-page.component';
 import { RecipeEditPageComponent } from './recipe-edit-page/recipe-edit-page.component';
+import { RelativeDatePipe } from './pipe/relative-date.pipe';
+import { ChangeNameDialogComponent } from './change-name-dialog/change-name-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +26,8 @@ import { RecipeEditPageComponent } from './recipe-edit-page/recipe-edit-page.com
     RecipeViewPageComponent,
     ProfilePageComponent,
     RecipeEditPageComponent,
+    RelativeDatePipe,
+    ChangeNameDialogComponent,
   ],
   imports: [
     BrowserModule,
