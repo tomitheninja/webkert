@@ -20,6 +20,10 @@ export class RecipeViewPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private firestore: Firestore) {}
 
+  isAuthor(recipe: FSRecipe): boolean {
+    return true;
+  }
+
   ngOnInit(): void {
     const recipeId = this.route.snapshot.paramMap.get('id');
 

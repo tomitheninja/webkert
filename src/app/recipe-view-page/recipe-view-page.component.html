@@ -1,28 +1,31 @@
-<div class="container">
-  <ng-container *ngIf="recipe$ | async as recipe">
-    <h1 class="title">{{ recipe.title }}</h1>
-    <img
-      class="recipe-image"
-      [src]="recipe.imageUrl || ''"
-      alt="{{ recipe.title }}"
-    />
-    <div class="recipe-content">
-      <p
-        class="recipe-description"
-        [innerHTML]="recipe.description | markdown"
-      ></p>
-      <h2 class="recipe-ingredients-title">Ingredients:</h2>
-      <ul class="recipe-ingredients">
-        <li *ngFor="let ingredient of recipe.ingredients">
-          {{ ingredient.name }}: {{ ingredient.amount }}
-        </li>
-      </ul>
-      <h2 class="recipe-instructions-title">Instructions:</h2>
+<ng-container *ngIf="recipe$ | async as recipe">
+  <mat-card class="recipe-card">
+    <mat-card-header>
+      <mat-card-title>{{ recipe.title }}</mat-card-title>
+      <mat-card-subtitle>By {{ recipe.authorName }}</mat-card-subtitle>
+    </mat-card-header>
+    <!-- <img mat-card-image [src]="recipe.imageUrl" alt="{{ recipe.title }}" /> -->
+    <mat-card-content>
       <div
-        class="recipe-instructions"
-        [innerHTML]="recipe.instructions | markdown"
+        *ngIf="recipe.imageUrl"
+        [ngStyle]="{ backgroundImage: 'url(' + recipe.imageUrl + ')' }"
+        class="overlay"
       ></div>
-      <p class="recipe-author">Recipe created by {{ recipe.authorName }}</p>
-    </div>
-  </ng-container>
-</div>
+      <markdown>{{ recipe.description.replaceAll("\\n", "\n") }}</markdown>
+      <h3>Ingredients</h3>
+      <mat-divider></mat-divider>
+      <mat-list>
+        <mat-list-item *ngFor="let ingredient of recipe.ingredients">
+          <h4 mat-line>- {{ ingredient.name }}: {{ ingredient.amount }}</h4>
+        </mat-list-item>
+      </mat-list>
+      <h3>Instructions</h3>
+      <mat-divider></mat-divider>
+      <markdown>{{ recipe.instructions.replaceAll("\\n", "\n") }}</markdown>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary">Edit Recipe</button>
+      <button mat-raised-button color="warn">Delete Recipe</button>
+    </mat-card-actions>
+  </mat-card>
+</ng-container>

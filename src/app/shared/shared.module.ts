@@ -17,6 +17,7 @@ import { AuthModule } from '../auth/auth.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatChipsModule } from '@angular/material/chips';
 
 const components = [ShellComponent];
 
@@ -26,6 +27,7 @@ const modules = [
   RouterModule,
   FormsModule,
   LayoutModule,
+  MatChipsModule,
   MatButtonModule,
   MatCardModule,
   MatDialogModule,
