@@ -16,6 +16,7 @@ import { ShellComponent } from './shell/shell.component';
 import { AuthModule } from '../auth/auth.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 const components = [ShellComponent];
 
@@ -31,6 +32,7 @@ const modules = [
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
+  MatGridListModule,
   MatListModule,
   MatMenuModule,
   MatSidenavModule,

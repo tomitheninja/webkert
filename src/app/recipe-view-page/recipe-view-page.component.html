@@ -1,1 +1,28 @@
-<p>recipe-view-page works!</p>
+<div class="container">
+  <ng-container *ngIf="recipe$ | async as recipe">
+    <h1 class="title">{{ recipe.title }}</h1>
+    <img
+      class="recipe-image"
+      [src]="recipe.imageUrl || ''"
+      alt="{{ recipe.title }}"
+    />
+    <div class="recipe-content">
+      <p
+        class="recipe-description"
+        [innerHTML]="recipe.description | markdown"
+      ></p>
+      <h2 class="recipe-ingredients-title">Ingredients:</h2>
+      <ul class="recipe-ingredients">
+        <li *ngFor="let ingredient of recipe.ingredients">
+          {{ ingredient.name }}: {{ ingredient.amount }}
+        </li>
+      </ul>
+      <h2 class="recipe-instructions-title">Instructions:</h2>
+      <div
+        class="recipe-instructions"
+        [innerHTML]="recipe.instructions | markdown"
+      ></div>
+      <p class="recipe-author">Recipe created by {{ recipe.authorName }}</p>
+    </div>
+  </ng-container>
+</div>

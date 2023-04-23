@@ -1,1 +1,31 @@
-<p>recipe-list-page works!</p>
+<div class="container">
+  <h1 class="title">Recipes</h1>
+  <div class="recipe-cards">
+    <div *ngFor="let recipe of recipes$ | async" class="recipe-card">
+      <div class="recipe-content">
+        <h2 class="recipe-title">{{ recipe.title }}</h2>
+        <p class="recipe-description">{{ recipe.description }}</p>
+        <div class="recipe-actions">
+          <a
+            class="recipe-view-link"
+            [routerLink]="['/recipes', recipe.id]"
+            mat-stroked-button
+            color="primary"
+          >
+            View
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="recipe-card add-recipe-card">
+      <a
+        class="add-recipe-link"
+        [routerLink]="['/recipes', 'new', 'edit']"
+        mat-raised-button
+        color="primary"
+      >
+        Add Recipe
+      </a>
+    </div>
+  </div>
+</div>

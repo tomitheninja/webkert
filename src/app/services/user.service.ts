@@ -1,14 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Observable, defaultIfEmpty, first, firstValueFrom } from 'rxjs';
+import { Observable, first } from 'rxjs';
 import { FSUser } from '../model/user';
-import {
-  Firestore,
-  doc,
-  docData,
-  onSnapshot,
-  updateDoc,
-} from '@angular/fire/firestore';
+import { Firestore, doc, onSnapshot, updateDoc } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',

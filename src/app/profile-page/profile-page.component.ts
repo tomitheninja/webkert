@@ -3,15 +3,13 @@ import { UserService } from '../services/user.service';
 import { FSUser } from '../model/user';
 import { MatDialog } from '@angular/material/dialog';
 import { ChangeNameDialogComponent } from '../change-name-dialog/change-name-dialog.component';
-import { finalize } from 'rxjs';
+
 import {
   Storage,
   getDownloadURL,
   ref,
   uploadBytes,
-  uploadBytesResumable,
 } from '@angular/fire/storage';
-import { doc, updateDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-profile',

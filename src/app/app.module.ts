@@ -17,6 +17,7 @@ import { ProfilePageComponent } from './profile-page/profile-page.component';
 import { RecipeEditPageComponent } from './recipe-edit-page/recipe-edit-page.component';
 import { RelativeDatePipe } from './pipe/relative-date.pipe';
 import { ChangeNameDialogComponent } from './change-name-dialog/change-name-dialog.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { ChangeNameDialogComponent } from './change-name-dialog/change-name-dial
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
     BrowserAnimationsModule,
+    MarkdownModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -43,3 +43,9 @@ i {
   border-radius: 50%;
   margin: 0 10px 5px;
 }
+
+@media screen and (max-width: 600px) {
+  .recipe-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
