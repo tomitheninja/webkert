@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "recipe-managment": {
+      "hosting": {
+        "recipe-management-app": [
+          "recipe-managment"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "recipe-managment"
+  }
+}
