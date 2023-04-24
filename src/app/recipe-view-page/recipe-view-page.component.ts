@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Firestore, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { FSRecipe } from '../model/recipe';
+import { UserService } from '../services/user.service';
+import { FSUser } from '../model/user';
 
 @Component({
   selector: 'app-recipe-view-page',
@@ -11,16 +13,14 @@ import { FSRecipe } from '../model/recipe';
 })
 export class RecipeViewPageComponent implements OnInit {
   recipe$!: Observable<FSRecipe>;
+  user$: Observable<FSUser | null> | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
-
-  isAuthor(recipe: FSRecipe): boolean {
-    return true;
-  }
 
   ngOnInit(): void {
     const recipeId = this.route.snapshot.paramMap.get('id');
@@ -36,6 +36,9 @@ export class RecipeViewPageComponent implements OnInit {
         });
       });
     }
+
+    // get the currently logged-in user
+    this.user$ = this.userService.getStream();
   }
 
   async deleteRecipe(): Promise<void> {

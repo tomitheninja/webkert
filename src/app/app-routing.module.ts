@@ -22,6 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'recipes/:id/edit',
+    canActivate: [AuthGuard],
     component: RecipeEditPageComponent,
   },
   {

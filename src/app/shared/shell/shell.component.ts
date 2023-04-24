@@ -1,5 +1,5 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Observable, map, shareReplay } from 'rxjs';
 import { FSUser } from 'src/app/model/user';
@@ -10,7 +10,7 @@ import { UserService } from 'src/app/services/user.service';
   templateUrl: './shell.component.html',
   styleUrls: ['./shell.component.scss'],
 })
-export class ShellComponent {
+export class ShellComponent implements OnInit {
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe([Breakpoints.Handset])
     .pipe(
@@ -23,8 +23,9 @@ export class ShellComponent {
   constructor(
     public afAuth: Auth,
     private breakpointObserver: BreakpointObserver,
-    userService: UserService
-  ) {
-    this.user$ = userService.getStream();
+    private userService: UserService
+  ) {}
+  ngOnInit(): void {
+    this.user$ = this.userService.getStream();
   }
 }
