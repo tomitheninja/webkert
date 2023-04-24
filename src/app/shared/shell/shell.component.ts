@@ -18,7 +18,7 @@ export class ShellComponent {
       shareReplay()
     );
 
-  user$: Observable<FSUser | null>;
+  user$: Observable<FSUser | null> | null = null;
 
   constructor(
     public afAuth: Auth,

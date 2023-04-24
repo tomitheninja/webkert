@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { FSRecipe } from '../model/recipe';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { addDoc, collection } from '@angular/fire/firestore';
 import {
   Storage,
   getDownloadURL,
   ref,
   uploadBytes,
 } from '@angular/fire/storage';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-recipe-edit-page',
@@ -17,7 +19,7 @@ import {
   styleUrls: ['./recipe-edit-page.component.scss'],
 })
 export class RecipeEditPageComponent implements OnInit {
-  recipe$!: Observable<FSRecipe>;
+  //recipe$!: Observable<FSRecipe>;
   recipeForm!: FormGroup;
 
   constructor(
@@ -25,37 +27,66 @@ export class RecipeEditPageComponent implements OnInit {
     private router: Router,
     private firestore: Firestore,
     private fsStorage: Storage,
+    private userService: UserService,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     const recipeId = this.route.snapshot.paramMap.get('id');
 
-    if (recipeId) {
+    if (recipeId === 'new') {
+      this.userService.getStream().subscribe((user) => {
+        if (!user) return;
+        this.initForm(
+          new FSRecipe({
+            authorId: user.id,
+            authorName: user.name,
+          })
+        );
+      });
+    } else if (recipeId) {
       const recipeRef = doc(this.firestore, 'recipes', recipeId);
-      this.recipe$ = new Observable<FSRecipe>((observer) => {
-        getDoc(recipeRef).then((doc) => {
-          if (doc.exists()) {
-            const recipeData = doc.data() as FSRecipe;
-            observer.next(recipeData);
-
-            this.recipeForm = this.fb.group({
-              title: [recipeData.title, Validators.required],
-              description: [recipeData.description, Validators.required],
-              ingredients: this.fb.array(
-                recipeData.ingredients.map((ingredient) =>
-                  this.fb.group({
-                    name: [ingredient.name, Validators.required],
-                    amount: [ingredient.amount, Validators.required],
-                  })
-                )
-              ),
-              instructions: [recipeData.instructions, Validators.required],
-            });
-          }
-        });
+      //new Observable<FSRecipe>((observer) => {
+      getDoc(recipeRef).then((doc) => {
+        if (doc.exists()) {
+          const recipeData = doc.data() as FSRecipe;
+          //  observer.next(recipeData);
+          this.initForm(recipeData);
+        }
+        // });
       });
     }
+  }
+
+  initForm(recipeData: FSRecipe): void {
+    this.recipeForm = this.fb.group({
+      authorId: [recipeData.authorId],
+      authorName: [recipeData.authorName],
+      imageUrl: [recipeData.imageUrl],
+      title: [recipeData.title, Validators.required],
+      description: [recipeData.description, Validators.required],
+      ingredients: this.fb.array(
+        recipeData.ingredients?.map((ingredient) =>
+          this.fb.group({
+            name: [ingredient.name, Validators.required],
+            amount: [ingredient.amount, Validators.required],
+          })
+        ) || []
+      ),
+      instructions: [recipeData.instructions, Validators.required],
+    });
+  }
+
+  async createRecipe(recipeData: FSRecipe): Promise<void> {
+    const recipeRef = collection(this.firestore, 'recipes');
+
+    const docRef = await addDoc(recipeRef, recipeData);
+
+    await updateDoc(docRef, {
+      id: docRef.id, // Add the document ID
+    });
+
+    this.router.navigate(['/recipes', docRef.id]);
   }
 
   async uploadImage(event: Event): Promise<void> {
@@ -63,19 +94,19 @@ export class RecipeEditPageComponent implements OnInit {
     const file = fileInput.files?.[0];
     if (!file) return;
     const recipeId = this.route.snapshot.paramMap.get('id');
-    const extension = file.name.split('.').pop();
-    const filePath = `recipes/${recipeId}/image.${extension}`;
+    const filePath = `recipes/${Date.now()}${file.name}`;
     const fileRef = ref(this.fsStorage, filePath);
     const uploadTask = await uploadBytes(fileRef, file);
 
     // get http url
     const downloadURL = await getDownloadURL(uploadTask.ref);
-    console.log('downloadURL', downloadURL);
 
-    if (recipeId) {
+    if (recipeId && recipeId !== 'new') {
       const recipeRef = doc(this.firestore, 'recipes', recipeId);
       await updateDoc(recipeRef, { imageUrl: downloadURL });
     }
+
+    this.recipeForm.patchValue({ imageUrl: downloadURL });
   }
 
   get ingredients(): FormArray {
@@ -98,15 +129,20 @@ export class RecipeEditPageComponent implements OnInit {
   async submitRecipe(): Promise<void> {
     if (this.recipeForm.valid) {
       const recipeId = this.route.snapshot.paramMap.get('id');
-      const recipeRef = doc(this.firestore, 'recipes', recipeId!);
-      const updatedDate = new Date();
 
-      await updateDoc(recipeRef, {
-        ...this.recipeForm.value,
-        updatedDate,
-      });
+      if (recipeId === 'new') {
+        await this.createRecipe(this.recipeForm.value);
+      } else {
+        const recipeRef = doc(this.firestore, 'recipes', recipeId!);
+        const updatedDate = new Date();
 
-      this.router.navigate(['/recipes', recipeId]);
+        await updateDoc(recipeRef, {
+          ...this.recipeForm.value,
+          updatedDate,
+        });
+
+        this.router.navigate(['/recipes', recipeId]);
+      }
     }
   }
 }
