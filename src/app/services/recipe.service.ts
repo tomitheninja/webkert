@@ -7,6 +7,10 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  query,
+  orderBy,
+  collectionData,
+  CollectionReference,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { FSRecipe } from '../model/recipe';
@@ -15,10 +19,10 @@ import { FSRecipe } from '../model/recipe';
   providedIn: 'root',
 })
 export class RecipeService {
-  constructor(private firestore: Firestore) {}
+  constructor(private fbStore: Firestore) {}
 
   async addRecipe(recipe: Partial<FSRecipe>): Promise<string> {
-    const recipeCollection = collection(this.firestore, 'recipes');
+    const recipeCollection = collection(this.fbStore, 'recipes');
     const docRef = await addDoc(recipeCollection, recipe);
     recipe.id = docRef.id;
     await updateDoc(docRef, recipe);
@@ -30,18 +34,18 @@ export class RecipeService {
     if (!recipe.id) {
       throw new Error('Recipe must have an id');
     }
-    const recipeDoc = doc(this.firestore, 'recipes', recipe.id);
+    const recipeDoc = doc(this.fbStore, 'recipes', recipe.id);
     const data = recipe.json();
     return updateDoc(recipeDoc, data as any);
   }
 
   deleteRecipe(recipeId: string): Promise<void> {
-    const recipeDoc = doc(this.firestore, 'recipes', recipeId);
+    const recipeDoc = doc(this.fbStore, 'recipes', recipeId);
     return deleteDoc(recipeDoc);
   }
 
   getRecipe(recipeId: string): Observable<FSRecipe | null> {
-    const recipeDoc = doc(this.firestore, 'recipes', recipeId);
+    const recipeDoc = doc(this.fbStore, 'recipes', recipeId);
     return new Observable<FSRecipe | null>((observer) => {
       getDoc(recipeDoc).then((doc) => {
         if (doc.exists()) {
@@ -52,5 +56,13 @@ export class RecipeService {
         }
       });
     });
+  }
+
+  listRecipes(): Observable<FSRecipe[]> {
+    const recipesRef = collection(
+      this.fbStore,
+      'recipes'
+    ) as CollectionReference<FSRecipe>;
+    return collectionData(query(recipesRef, orderBy('title', 'asc')));
   }
 }

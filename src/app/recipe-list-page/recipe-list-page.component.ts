@@ -1,13 +1,7 @@
 import { Component } from '@angular/core';
 import { FSRecipe } from '../model/recipe';
 import { Observable } from 'rxjs';
-import {
-  CollectionReference,
-  DocumentData,
-  Firestore,
-  collection,
-  collectionData,
-} from '@angular/fire/firestore';
+import { RecipeService } from '../services/recipe.service';
 
 @Component({
   selector: 'app-recipe-list-page',
@@ -15,16 +9,12 @@ import {
   styleUrls: ['./recipe-list-page.component.scss'],
 })
 export class RecipeListPageComponent {
-  recipes$!: Observable<FSRecipe[]>;
-  private recipeCollection!: CollectionReference<DocumentData>;
+  public recipes$!: Observable<FSRecipe[]>;
 
-  constructor(private firestore: Firestore) {}
+  constructor(private RecipeService: RecipeService) {}
 
   ngOnInit() {
     // Get a reference to the user-profile collection
-    this.recipeCollection = collection(this.firestore, 'recipes');
-    this.recipes$ = collectionData(this.recipeCollection) as Observable<
-      FSRecipe[]
-    >;
+    this.recipes$ = this.RecipeService.listRecipes();
   }
 }
