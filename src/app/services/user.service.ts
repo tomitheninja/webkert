@@ -1,55 +1,83 @@
 import { Injectable } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { Observable, first } from 'rxjs';
+import { Observable, firstValueFrom, of, switchMap } from 'rxjs';
+import {
+  Storage,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from '@angular/fire/storage';
+
 import { FSUser } from '../model/user';
 import { Firestore, doc, onSnapshot, updateDoc } from '@angular/fire/firestore';
+import { AuthService } from './auth.service';
+import { User } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private user$: Observable<FSUser | null>;
-  getStream() {
+
+  constructor(
+    private authService: AuthService,
+    private fbStore: Firestore,
+    private fsStorage: Storage
+  ) {
+    this.user$ = authService.getStream().pipe(
+      switchMap((user: User | null) => {
+        if (!user) return of(null);
+        const userDoc = doc(this.fbStore, 'users', user.uid);
+        return new Observable<FSUser | null>((observer) => {
+          const unsubscribeUser = onSnapshot(userDoc, (doc) => {
+            return doc.exists()
+              ? observer.next(doc.data() as FSUser)
+              : observer.next(null);
+          });
+          return unsubscribeUser;
+        });
+      })
+    );
+  }
+
+  getStream(): Observable<FSUser | null> {
     return this.user$;
   }
-  changePhotoUrl(userId: string, photoURL: string): Promise<void> {
-    const userDoc = doc(this.fs, 'users', userId);
-    const data: Pick<FSUser, 'photoURL'> = { photoURL };
-    return updateDoc(userDoc, data);
+
+  async getUser(): Promise<FSUser | null> {
+    return firstValueFrom(this.user$);
   }
-  constructor(private afAuth: Auth, private fs: Firestore) {
-    this.user$ = new Observable<FSUser | null>((observer) => {
-      let unsubscribeAuth: () => void;
-      let unsubscribeUser: () => void;
 
-      // Listen for changes to the authentication state
-      unsubscribeAuth = this.afAuth.onAuthStateChanged((user) => {
-        if (user) {
-          // Listen for changes to the user document
-          const userDoc = doc(this.fs, 'users', user.uid);
-          unsubscribeUser = onSnapshot(userDoc, (doc) => {
-            if (doc.exists()) {
-              const userData = doc.data() as FSUser;
-              observer.next(userData);
-            }
-          });
-        } else {
-          observer.next(null);
-        }
-      });
+  async updateMyUserData(userData: Partial<FSUser>): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user) throw new Error('User is not authenticated');
+    const userDoc = doc(this.fbStore, 'users', user.uid);
+    return updateDoc(userDoc, userData);
+  }
 
-      return () => {
-        unsubscribeAuth();
-        if (unsubscribeUser) {
-          unsubscribeUser();
-        }
-      };
+  changeAvatar() {
+    const user = this.authService.getUser();
+    if (!user) throw new Error('User is not authenticated');
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+      const extension = file.name.split('.').pop();
+      const filePath = `user/${user.uid}/avatar.${extension}`;
+      const fileRef = ref(this.fsStorage, filePath);
+      const uploadTask = await uploadBytes(fileRef, file);
+
+      // get http url
+      const downloadURL = await getDownloadURL(uploadTask.ref);
+      const userDoc = doc(this.fbStore, 'users', user.uid);
+      return updateDoc(userDoc, { photoURL: downloadURL } as Pick<
+        FSUser,
+        'photoURL'
+      >);
     });
-  }
-  async updateName(newName: string): Promise<void> {
-    const user = await this.user$.pipe(first()).toPromise();
-    const userDoc = doc(this.fs, 'users', user!.id);
-    const data: Pick<FSUser, 'name'> = { name: newName };
-    return await updateDoc(userDoc, data);
+
+    fileInput.click();
   }
 }
