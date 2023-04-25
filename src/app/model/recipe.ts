@@ -16,9 +16,6 @@ export class FSRecipe {
       throw new Error(`Recipe#${this.id} must have an author`);
     }
   }
-  json(): FSRecipe {
-    return Object.assign({}, this);
-  }
 }
 
 export interface RecipeIngredient {

@@ -31,15 +31,14 @@ export class GoogleSigninDirective {
           }
           console.log(user);
 
-          await setDoc(
-            users,
-            new FSUser({
+          await setDoc(users, {
+            ...new FSUser({
               name: result.user.displayName || 'Anonymous',
               email: result.user.email ?? null,
               photoURL: result.user.photoURL ?? null,
               id: result.user.uid,
-            }).json()
-          );
+            }),
+          });
         } else {
           await updateDoc(users, { lastLogin: new Date() });
         }

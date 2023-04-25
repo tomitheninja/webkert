@@ -15,8 +15,4 @@ export class FSUser {
       throw new Error('User#null must have an id');
     }
   }
-
-  json(): FSUser {
-    return Object.assign({}, this);
-  }
 }
