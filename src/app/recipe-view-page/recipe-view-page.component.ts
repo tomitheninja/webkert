@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Firestore, deleteDoc, doc, getDoc } from '@angular/fire/firestore';
 import { FSRecipe } from '../model/recipe';
-import { UserService } from '../services/user.service';
-import { FSUser } from '../model/user';
+import { RecipeService } from '../services/recipe.service';
+import { AuthService } from '../services/auth.service';
+import { User } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-recipe-view-page',
@@ -13,42 +13,31 @@ import { FSUser } from '../model/user';
 })
 export class RecipeViewPageComponent implements OnInit {
   recipe$!: Observable<FSRecipe>;
-  user$: Observable<FSUser | null> | null = null;
+  user$!: Observable<User | null> | null;
 
   constructor(
     private route: ActivatedRoute,
-    private firestore: Firestore,
     private router: Router,
-    private userService: UserService
+    private recipeService: RecipeService,
+    private authService: AuthService
   ) {}
 
-  ngOnInit(): void {
-    const recipeId = this.route.snapshot.paramMap.get('id');
-
-    if (recipeId) {
-      const recipeRef = doc(this.firestore, 'recipes', recipeId);
-      this.recipe$ = new Observable<FSRecipe>((observer) => {
-        getDoc(recipeRef).then((doc) => {
-          if (doc.exists()) {
-            const recipeData = doc.data() as FSRecipe;
-            observer.next(recipeData);
-          }
-        });
-      });
-    }
-
-    // get the currently logged-in user
-    this.user$ = this.userService.getStream();
+  private getId() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) throw new Error('No recipe id provided');
+    return id;
   }
 
-  async deleteRecipe(): Promise<void> {
-    const recipeId = this.route.snapshot.paramMap.get('id');
-    if (!recipeId) {
-      return;
-    }
+  ngOnInit(): void {
+    this.user$ = this.authService.getStream();
 
-    const recipeRef = doc(this.firestore, 'recipes', recipeId);
-    await deleteDoc(recipeRef);
+    this.recipe$ = this.recipeService.getRecipe(
+      this.getId()
+    ) as Observable<FSRecipe>;
+  }
+
+  async deleteRecipe() {
+    await this.recipeService.deleteRecipe(this.getId());
     this.router.navigate(['/']);
   }
 }

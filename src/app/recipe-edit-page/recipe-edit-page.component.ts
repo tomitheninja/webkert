@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { Firestore, doc, getDoc, updateDoc } from '@angular/fire/firestore';
+import {
+  DocumentData,
+  Firestore,
+  doc,
+  getDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
 import { FSRecipe } from '../model/recipe';
 import { FormGroup, FormBuilder, FormArray, Validators } from '@angular/forms';
 import { addDoc, collection } from '@angular/fire/firestore';
@@ -12,6 +17,7 @@ import {
   uploadBytes,
 } from '@angular/fire/storage';
 import { UserService } from '../services/user.service';
+import { RecipeService } from '../services/recipe.service';
 
 @Component({
   selector: 'app-recipe-edit-page',
@@ -28,33 +34,32 @@ export class RecipeEditPageComponent implements OnInit {
     private firestore: Firestore,
     private fsStorage: Storage,
     private userService: UserService,
+    private recipeService: RecipeService,
     private fb: FormBuilder
   ) {}
 
-  ngOnInit(): void {
-    const recipeId = this.route.snapshot.paramMap.get('id');
+  private getId() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) throw new Error('No recipe id provided');
+    return id;
+  }
 
-    if (recipeId === 'new') {
-      this.userService.getStream().subscribe((user) => {
-        if (!user) return;
-        this.initForm(
-          new FSRecipe({
-            authorId: user.id,
-            authorName: user.name,
-          })
-        );
-      });
-    } else if (recipeId) {
-      const recipeRef = doc(this.firestore, 'recipes', recipeId);
-      //new Observable<FSRecipe>((observer) => {
-      getDoc(recipeRef).then((doc) => {
-        if (doc.exists()) {
-          const recipeData = doc.data() as FSRecipe;
-          //  observer.next(recipeData);
-          this.initForm(recipeData);
-        }
-        // });
-      });
+  async ngOnInit() {
+    if (this.getId() === 'new') {
+      const user = await this.userService.getUser();
+      if (!user) throw new Error('No user logged in');
+      this.initForm(
+        new FSRecipe({
+          authorId: user.id,
+          authorName: user.name,
+        })
+      );
+    } else {
+      const recipeRef = doc(this.firestore, 'recipes', this.getId());
+
+      const snap = await getDoc(recipeRef);
+      if (!snap.exists()) throw new Error('No such document!');
+      this.initForm(snap.data() as FSRecipe);
     }
   }
 
@@ -78,35 +83,14 @@ export class RecipeEditPageComponent implements OnInit {
   }
 
   async createRecipe(recipeData: FSRecipe): Promise<void> {
-    const recipeRef = collection(this.firestore, 'recipes');
-
-    const docRef = await addDoc(recipeRef, recipeData);
-
-    await updateDoc(docRef, {
-      id: docRef.id, // Add the document ID
-    });
-
-    this.router.navigate(['/recipes', docRef.id]);
+    const id = await this.recipeService.createRecipe(recipeData);
+    this.router.navigate(['/recipes', id]);
   }
 
   async uploadImage(event: Event): Promise<void> {
-    const fileInput = event.target as HTMLInputElement;
-    const file = fileInput.files?.[0];
-    if (!file) return;
-    const recipeId = this.route.snapshot.paramMap.get('id');
-    const filePath = `recipes/${Date.now()}${file.name}`;
-    const fileRef = ref(this.fsStorage, filePath);
-    const uploadTask = await uploadBytes(fileRef, file);
-
-    // get http url
-    const downloadURL = await getDownloadURL(uploadTask.ref);
-
-    if (recipeId && recipeId !== 'new') {
-      const recipeRef = doc(this.firestore, 'recipes', recipeId);
-      await updateDoc(recipeRef, { imageUrl: downloadURL });
-    }
-
-    this.recipeForm.patchValue({ imageUrl: downloadURL });
+    const imageUrl = await this.recipeService.uploadImage(event, this.getId());
+    console.log({ imageUrl });
+    this.recipeForm.patchValue({ imageUrl });
   }
 
   get ingredients(): FormArray {
@@ -133,14 +117,10 @@ export class RecipeEditPageComponent implements OnInit {
       if (recipeId === 'new') {
         await this.createRecipe(this.recipeForm.value);
       } else {
-        const recipeRef = doc(this.firestore, 'recipes', recipeId!);
-        const updatedDate = new Date();
-
-        await updateDoc(recipeRef, {
+        await this.recipeService.updateRecipe({
           ...this.recipeForm.value,
-          updatedDate,
+          id: recipeId,
         });
-
         this.router.navigate(['/recipes', recipeId]);
       }
     }

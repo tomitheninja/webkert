@@ -23,7 +23,7 @@
       <mat-divider></mat-divider>
       <markdown>{{ recipe.instructions.replaceAll("\\n", "\n") }}</markdown>
     </mat-card-content>
-    <mat-card-actions *ngIf="recipe.authorId === (user$ | async)?.id">
+    <mat-card-actions *ngIf="recipe.authorId === (user$ | async)?.uid">
       <button
         mat-raised-button
         color="primary"
