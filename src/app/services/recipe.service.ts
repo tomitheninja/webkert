@@ -11,6 +11,9 @@ import {
   orderBy,
   collectionData,
   CollectionReference,
+  where,
+  writeBatch,
+  getDocs,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { FSRecipe } from '../model/recipe';
@@ -92,5 +95,19 @@ export class RecipeService {
     }
 
     return downloadURL;
+  }
+
+  async updateAuthorName(userId: string, newUsername: string): Promise<void> {
+    // Get all recipes authored by the user
+    const recipesRef = collection(this.fbStore, 'recipes');
+    const queryRef = query(recipesRef, where('authorId', '==', userId));
+    const recipeDocs = await getDocs(queryRef);
+
+    // Update the authorName field in each recipe document
+    const batch = writeBatch(this.fbStore);
+    recipeDocs.forEach((doc) => {
+      batch.update(doc.ref, { authorName: newUsername });
+    });
+    await batch.commit();
   }
 }

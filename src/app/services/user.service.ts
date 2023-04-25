@@ -11,6 +11,7 @@ import { FSUser } from '../model/user';
 import { Firestore, doc, onSnapshot, updateDoc } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import { User } from 'firebase/auth';
+import { RecipeService } from './recipe.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class UserService {
   constructor(
     private authService: AuthService,
     private fbStore: Firestore,
-    private fsStorage: Storage
+    private fsStorage: Storage,
+    private recipeService: RecipeService
   ) {
     this.user$ = authService.getStream().pipe(
       switchMap((user: User | null) => {
@@ -52,6 +54,13 @@ export class UserService {
     if (!user) throw new Error('User is not authenticated');
     const userDoc = doc(this.fbStore, 'users', user.uid);
     return updateDoc(userDoc, userData);
+  }
+
+  async changeUsername(name: string): Promise<void> {
+    const user = this.authService.getUser();
+    if (!user) throw new Error('User is not authenticated');
+    await this.updateMyUserData({ name });
+    await this.recipeService.updateAuthorName(user.uid, name);
   }
 
   changeAvatar() {

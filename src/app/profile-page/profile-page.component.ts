@@ -5,6 +5,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { FSUser } from '../model/user';
 import { UserService } from '../services/user.service';
 import { ChangeNameDialogComponent } from '../change-name-dialog/change-name-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-page',
@@ -14,28 +15,36 @@ import { ChangeNameDialogComponent } from '../change-name-dialog/change-name-dia
 export class ProfilePageComponent implements OnInit {
   user$!: Observable<FSUser | null>;
 
-  constructor(private userService: UserService, private dialog: MatDialog) {}
+  constructor(
+    private userService: UserService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.user$ = this.userService.getStream();
   }
 
-  openDialog(): void {
-    this.user$
+  openDialog() {
+    let isOpen = false;
+    return this.user$
       .pipe(
         filter((user) => user != null),
         map((user) => user!.name),
         switchMap((name) => {
           const dialogRef = this.dialog.open(ChangeNameDialogComponent, {
-            width: '250px',
+            width: isOpen ? '0px' : '250px',
             data: { name: name || '' },
           });
+          if (isOpen) (async () => dialogRef.close())();
+
           return dialogRef.afterClosed();
         }),
         filter((newName) => !!newName)
       )
-      .subscribe((newName) => {
-        this.userService.updateMyUserData({ name: newName });
+      .subscribe(async (newName) => {
+        isOpen = true;
+        await this.userService.changeUsername(newName);
       });
   }
 
