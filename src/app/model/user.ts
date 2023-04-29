@@ -1,8 +1,10 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 export class FSUser {
   email: string | null = null;
   photoURL: string | null = null;
-  lastLogin: Date | { seconds: number } = new Date();
-  createdAt: Date | { seconds: number } = new Date();
+  lastLogin: Date | Timestamp = new Date();
+  createdAt: Date | Timestamp = new Date();
   name!: string;
   id!: string;
 

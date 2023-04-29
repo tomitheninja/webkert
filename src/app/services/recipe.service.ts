@@ -23,12 +23,17 @@ import {
   ref,
   uploadBytes,
 } from '@angular/fire/storage';
+import { RecipeCommentService } from './recipe-comment.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipeService {
-  constructor(private fbStore: Firestore, private fbStorage: Storage) {}
+  constructor(
+    private fbStore: Firestore,
+    private fbStorage: Storage,
+    public comments: RecipeCommentService
+  ) {}
 
   async createRecipe(recipe: Partial<FSRecipe>): Promise<string> {
     const recipeCollection = collection(this.fbStore, 'recipes');

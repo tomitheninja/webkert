@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Observable, firstValueFrom, of, switchMap } from 'rxjs';
 import {
   Storage,
@@ -23,7 +23,7 @@ export class UserService {
     private authService: AuthService,
     private fbStore: Firestore,
     private fsStorage: Storage,
-    private recipeService: RecipeService
+    private injector: Injector
   ) {
     this.user$ = authService.getStream().pipe(
       switchMap((user: User | null) => {
@@ -60,7 +60,8 @@ export class UserService {
     const user = this.authService.getUser();
     if (!user) throw new Error('User is not authenticated');
     await this.updateMyUserData({ name });
-    await this.recipeService.updateAuthorName(user.uid, name);
+
+    return this.injector.get(RecipeService).updateAuthorName(user.uid, name);
   }
 
   changeAvatar() {

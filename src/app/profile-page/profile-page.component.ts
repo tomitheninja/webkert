@@ -15,11 +15,7 @@ import { Router } from '@angular/router';
 export class ProfilePageComponent implements OnInit {
   user$!: Observable<FSUser | null>;
 
-  constructor(
-    private userService: UserService,
-    private dialog: MatDialog,
-    private router: Router
-  ) {}
+  constructor(private userService: UserService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.user$ = this.userService.getStream();

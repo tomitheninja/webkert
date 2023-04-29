@@ -1,13 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 import { differenceInMilliseconds } from 'date-fns';
 
 @Pipe({
   name: 'relativeDate',
 })
 export class RelativeDatePipe implements PipeTransform {
-  transform(value: { seconds: number } | Date): string {
+  transform(value: Timestamp | Date): string {
     if (value instanceof Date) {
-      value = { seconds: value.getTime() / 1000 };
+      value = Timestamp.fromDate(value);
     }
     const diff = differenceInMilliseconds(Date.now(), value.seconds * 1000);
 

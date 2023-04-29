@@ -36,4 +36,63 @@
       </button>
     </mat-card-actions>
   </mat-card>
+
+  <mat-card class="comment-section">
+    <h2 class="section-title">Comments</h2>
+
+    <form
+      class="comment-form"
+      [formGroup]="commentForm"
+      (ngSubmit)="addComment()"
+    >
+      <mat-form-field appearance="fill">
+        <mat-label>Add a comment</mat-label>
+        <textarea
+          matInput
+          formControlName="content"
+          required
+          maxlength="300"
+        ></textarea>
+        <mat-hint align="end">
+          {{ commentForm.get("content")!.value?.length || 0 }}/300
+        </mat-hint>
+        <mat-error *ngIf="commentForm.invalid"
+          >Comment is required (max. 300 characters)</mat-error
+        >
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="commentForm.invalid"
+      >
+        <mat-icon>add_comment</mat-icon>
+        Post Comment
+      </button>
+    </form>
+
+    <div class="comment-list">
+      <ng-container *ngIf="recipe.comments.length != 0; else noComments">
+        <mat-list>
+          <mat-list-item *ngFor="let comment of recipe.comments" class="asd">
+            <div class="comment">
+              <img
+                src="https://1.gravatar.com/avatar/be8819126bd50fa16210bc5dd249beb2?s=360"
+                alt="{{ comment.authorName }} avatar"
+                class="avatar"
+              />
+              <div class="details">
+                <h4 class="author-name">{{ comment.authorName }}</h4>
+                <p class="comment-text">{{ comment.comment }}</p>
+                <p class="timestamp">{{ comment.createdAt | relativeDate }}</p>
+              </div>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </ng-container>
+      <ng-template #noComments>
+        <p class="no-comments mat-body-1">No comments yet.</p>
+      </ng-template>
+    </div>
+  </mat-card>
 </ng-container>

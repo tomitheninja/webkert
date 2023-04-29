@@ -1,3 +1,5 @@
+import { RecipeComment } from './recipe-comment';
+
 export class FSRecipe {
   id?: string;
   title: string = '';
@@ -9,6 +11,7 @@ export class FSRecipe {
   updatedDate?: Date = new Date();
   authorId!: string;
   authorName!: string;
+  comments: RecipeComment[] = [];
 
   constructor(json: Partial<FSRecipe>) {
     Object.assign(this, json);
