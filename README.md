@@ -11,9 +11,9 @@ mat-sidenav-container
 mat-sidenav
 mat-toolbar
 
-- [ ] Fordítási hiba nincs
-- [ ] Futtatási hiba nincs
-- [ ] Firebase Hosting URL (létezik, és minden végpont megfelelő módon betöltődik)
+- [x] Fordítási hiba nincs
+- [x] Futtatási hiba nincs
+- [x] Firebase Hosting URL (létezik, és minden végpont megfelelő módon betöltődik)
 - [x] Adatmodell definiálása (legalább 4 TypeScript interfész vagy class formájában (ugyanennyi kollekció))
   1. FSUser
   2. FSRecipe
@@ -22,7 +22,7 @@ mat-toolbar
 - [x] Alkalmazás felbontása megfelelő számú komponensre (egyetlen komponens TS és HTML kódja sem haladja meg a 250 sort és soronként a 400 karaktert)
   1. `find src -type f | grep -e '.ts' -e '.html' | xargs wc -l | sort -n | tail -1` # 128
   2. `find src -type f | grep -e '.ts' -e '.html' | awk '{print length}' | sort -n | tail -1` # 60
-- [ ] Reszponzív, mobile-first felület (minden adat látható és jól jelenik meg böngészőben is, mobil nézetben is)
+- [x] Reszponzív, mobile-first felület (minden adat látható és jól jelenik meg böngészőben is, mobil nézetben is)
 - [x] Legalább 2 különböző attribútum direktíva használata
   1. appGoogleSignin
   2. appSignout
