@@ -30,7 +30,12 @@
               <mat-label>Amount</mat-label>
               <input matInput type="text" formControlName="amount" />
             </mat-form-field>
-            <button mat-mini-fab color="warn" (click)="removeIngredient(i)">
+            <button
+              style="margin-bottom: 22px"
+              mat-mini-fab
+              color="warn"
+              (click)="removeIngredient(i)"
+            >
               <mat-icon>delete</mat-icon>
             </button>
           </div>

@@ -77,12 +77,17 @@
           <mat-list-item *ngFor="let comment of recipe.comments" class="asd">
             <div class="comment">
               <img
-                src="https://1.gravatar.com/avatar/be8819126bd50fa16210bc5dd249beb2?s=360"
+                src="{{
+                  (profileImgs | async)![comment.authorId] ||
+                    'https://external-content.duckduckgo.com/iu/?u=http%3A%2F%2Fchasesolar.org.uk%2Ffiles%2F2022%2F02%2Fblank-avatar.jpg&f=1&nofb=1&ipt=30c3ae6e35d85253ae46841722cafcd8eda654528e0eeb353efa1b572d042fbf&ipo=images'
+                }}"
                 alt="{{ comment.authorName }} avatar"
                 class="avatar"
               />
               <div class="details">
-                <h4 class="author-name">{{ comment.authorName }}</h4>
+                <h4 class="author-name">
+                  {{ comment.authorName }}
+                </h4>
                 <p class="comment-text">{{ comment.comment }}</p>
                 <p class="timestamp">{{ comment.createdAt | relativeDate }}</p>
               </div>
