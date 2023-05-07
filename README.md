@@ -1,5 +1,4 @@
-# !!! legalább 31 pont kell !!!
-## RecipeManagementApp
+# RecipeManagementApp
 
 https://recipe-managment.web.app/
 
