@@ -1,5 +1,7 @@
 # RecipeManagementApp
 
+https://recipe-managment.web.app/
+
 mat-button
 mat-icon
 mat-list-item
@@ -51,8 +53,8 @@ mat-toolbar
 - [x] CRUD műveletek service-ekbe vannak kiszervezve és megfelelő módon injektálva lettek
 - [x] Firestore adatbázis használata az adatokhoz (integráció, környezeti változók használata helyes legyen)
 - [x] Legalább 2 komplex Firestore lekérdezés megvalósítása (ide tartoznak: where feltétel, rendezés, léptetés, limitálás)\
-   1. updateAuthorName - where
-   2. listRecipes - orderBy
+  1.  updateAuthorName - where
+  2.  listRecipes - orderBy
 - [x] Legalább 4 különböző route a különböző oldalak eléréséhez
   1. / (home)
   2. /recipes
